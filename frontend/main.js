@@ -16,7 +16,7 @@ class ConnectionHandler {
         this.playerNumber = -1;
         this.playerName = "";
         this.game = undefined;
-        this.id = makeid(6);
+        this.id = makeid(12);
         console.log("Your id is: " + this.id);
 
         this.IP = null;

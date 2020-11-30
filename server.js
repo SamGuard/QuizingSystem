@@ -2,7 +2,6 @@ const http = require('http');//For the http server
 const webSocketServer = require("websocket").server;
 const app = require("./server/app");//Controls the http routing
 const shortID = require("short-id");//Used to generate the room codes
-const { isUndefined } = require('util');
 const {ID, Room, Map} = require('./server/classes.js')
 
 
@@ -31,32 +30,41 @@ of either:
 createroom - to create a new room
 joinroom - to join a room
 start - to let the players know to start the game
-pass - used to pass information from one player to the other
+req - request for the game state to change, can only be used by host of the game <-----------------IMPORTANT ONE
 error - if something has gone wrong  
+
+All socket messeges go into the function handleMessage
 */
 
 
-//ID stores the ID of each user to connect, this is so people using the same IP
-//Can play 
+//ID stores the ID of each user to connect, this is so people using the same IP can play
 
+//--------------------------
+// MORE CODE IN classes.js |
+//--------------------------
 
-rooms = [];
+rooms = [];//Stores all the rooms
 
+//Generates an id for the room code
 function genCode() {
     return shortID.generate().toLowerCase();
 }
 
+//This should be implemented, basically a way of filtering IPs. Such as multiple users from the same IP
+//Not really necessary for us tho
 function isOriginAllowed(ip) {
     return true;
 }
 
+//Starts a new room and sets host
 function addRoom(id) {
-    let code = genCode();
+    let code = genCode();//Rooms code
     rooms.push(new Room(code, id));
     console.log("Created room, IP: " + id.ip + " room code: " + code);
     return code;
 }
 
+//Compares two ID's
 function compareID(id1, id2) {
     if (id1.ip == id2.ip && id1.id == id2.id) {
         return true;
@@ -64,6 +72,7 @@ function compareID(id1, id2) {
     return false;
 }
 
+//finds a room by its room code
 function findRoomByCode(roomCode) {
     for (let i = 0; i < rooms.length; i++) {
         if (rooms[i].code == roomCode) {
@@ -73,6 +82,7 @@ function findRoomByCode(roomCode) {
     return -1;
 }
 
+//Finds a player in a room by the players ID
 function findPlayerByID(id) {
     for (let i = 0; i < connections.length; i++) {
         if (connections[i].id && compareID(id, connections[i].id)) {
@@ -82,10 +92,13 @@ function findPlayerByID(id) {
     return -1;
 }
 
+//When a new client connects, this function is called to give it an ID so we can identify who
+//The message is coming from
 function setID(mess, conn) {
     conn.id = new ID(conn.remoteAddress, mess.id);
 }
 
+//Calls addRoom and send back the data, not too sure why its in 2 seperate functions tho
 function createRoom(mess, conn) {
     conn.sendUTF(JSON.stringify({
         purp: "createroom",
@@ -95,6 +108,8 @@ function createRoom(mess, conn) {
     }));
 }
 
+//Allows a client to join an existing room given a room code, as well as sends out a 
+//Message to all other clients saying another player has connected
 function joinRoom(mess, conn) {
     conn.id = new ID(conn.remoteAddress, mess.id);
     let roomIndex = findRoomByCode(mess.data.roomCode);
@@ -128,9 +143,10 @@ function joinRoom(mess, conn) {
     }
 }
 
+//Starts game on all players, can only be done by host
 function startRoom(mess, conn){
     let roomID = findRoomByCode(mess.data.roomCode);
-    if(roomID != -1){
+    if(roomID != -1 && rooms[roomID].isHost(conn.id)){
         let clients = rooms[roomID].getClients();
         let mapData = rooms[roomID].getMap();
         for(let i = 0; i < clients.length; i++){
@@ -145,19 +161,23 @@ function startRoom(mess, conn){
     }
 }
 
+//Removes room, can only be done by host
 function destroyRoom(mess, conn) {
     let roomID = new ID(conn.remoteAddress, mess.roomID);
     let roomIndex = findRoomByCode(roomID);
-    if (roomIndex != -1) {
+    if (roomIndex != -1 && rooms[roomID].isHost(conn.id)) {
         rooms.splice(roomIndex, 1);
     }
 }
 
+//Removes player from room
 function removePlayer(id) {
     let playerIndex = findPlayerByID(id);
 
     if (playerIndex != -1) {
         connections.splice(playerIndex, 1);
+    } else {
+        return;
     }
 
     for(let i = 0; i < rooms.length; i++){
@@ -174,22 +194,26 @@ function removePlayer(id) {
 
 }
 
-function gameUpdate(mess, conn){
+//Requests the game state to change, can only be done by host
+//This is things such as: accept responses, next question etc 
+function req(mess, conn){
     let roomID = mess.data.roomCode;
     let data = mess.data.objects;
     let player = mess.data.player;
 
     let room = findRoomByCode(roomID);
-    let dataOut = rooms[room].updateGame(data, player);
-    let clients = rooms[room].getClients();
-    for(let i = 0; i < clients.length; i++){
-        let connIndex = findPlayerByID(clients[i]);
-        connections[connIndex].sendUTF(JSON.stringify({
-            purp: "update",
-            data: {objects: dataOut.objects, players: dataOut.players},
-            time: Date.now(),
-            id: connections[connIndex].id.id
-        }));   
+    if(room.isHost(conn.id)){
+        let dataOut = rooms[room].updateGame(data, player);
+        let clients = rooms[room].getClients();
+        for(let i = 0; i < clients.length; i++){
+            let connIndex = findPlayerByID(clients[i]);
+            connections[connIndex].sendUTF(JSON.stringify({
+                purp: "update",
+                data: {objects: dataOut.objects, players: dataOut.players},
+                time: Date.now(),
+                id: connections[connIndex].id.id
+            }));   
+        }
     }
 }
 
@@ -211,6 +235,8 @@ function endGame(mess, conn){
     }
 }
 
+
+//Needs replacing (if its actually needed)
 function newGame(mess, conn){
     let roomID = mess.data.roomCode;
     let data = mess.data.objects;
@@ -234,8 +260,8 @@ function handleMessage(mess, conn) {
         startRoom(mess, conn);
     } else if (mess.purp == "destroyroom") {
         destroyRoom(mess, conn);
-    } else if(mess.purp == "update"){
-        gameUpdate(mess, conn);
+    } else if(mess.purp == "req"){
+        req(mess, conn);
     } else if(mess.purp == "end"){
         endGame(mess, conn);
     } else if(mess.purp == "newGame"){
