@@ -1,0 +1,7 @@
+How to use the server sockets
+
+Start
+To start the connection just do a normal socket init once connected (socket.onopen event) send a setid which will set
+the way the server identifies the client. Previously this has been a random string, but now it'll be their 
+team code.
+

@@ -13,9 +13,7 @@ class ConnectionHandler {
         this.isHost = true;
         this.gameRunning = false;
         this.roomCode = "";
-        this.playerNumber = -1;
-        this.playerName = "";
-        this.game = undefined;
+        this.teamCode = null;
         this.id = makeid(12);
         console.log("Your id is: " + this.id);
 
@@ -32,70 +30,20 @@ class ConnectionHandler {
         
     }
 
-    createRoom() {
-        this.playerNumber = 0;
+    joinTeam() {
         let data = JSON.stringify({
-            purp: "createroom",
-            data: {},
+            purp: "jointeam",
+            data: { code: this.teamCode, name: "team1" },
             time: Date.now(),
             id: this.id
         });
         this.socket.send(data);
     }
 
-    destroyRoom() {
+    answer(){
         let data = JSON.stringify({
-            purp: "destroyroom",
-            data: { roomID: this.roomCode },
-            time: Date.now(),
-            id: this.id
-        });
-        this.socket.send(data);
-    }
-
-    joinRoom() {
-        let data = JSON.stringify({
-            purp: "joinroom",
-            data: { roomCode: this.roomCode },
-            time: Date.now(),
-            id: this.id
-        });
-        this.socket.send(data);
-    }
-
-    causeStartGame(){
-        let data = JSON.stringify({
-            purp: "startroom",
-            data: { roomCode: this.roomCode },
-            time: Date.now(),
-            id: this.id
-        });
-        this.socket.send(data);
-    }
-
-    startGame(map, playerNumber) {
-        console.log("Start game");
-        $('#createGamePage').hide();
-        $('#homePage').hide();
-        $('#waitingRoom').hide();
-
-        $('#gamePage').show();
-        if(this.game != undefined){
-            this.game.reset();
-            this.game.start(map);
-        }else{
-            this.gameRunning = true;
-
-            console.log("Game running, isHost: " + this.isHost);
-            this.game = new Game(this.isHost, this.socket, this.roomCode, this.playerNumber, this.playerName);
-            this.game.start(map);
-        }
-    }
-
-    nextGame(){
-        let data = JSON.stringify({
-            purp: "newGame",
-            data: { roomCode: this.roomCode },
+            purp: "submit",
+            data: { code: this.teamCode, answer: "yeeeeeeeeeeeeeeeeeeeeeeeeeeet" },
             time: Date.now(),
             id: this.id
         });
@@ -126,30 +74,18 @@ conHandler.socket.onmessage = function (event) {
         console.log("Invalid ID: " + data.id);
         return;
     }
-    if(data.purp == "update"){
-        conHandler.game.pull(data);
-    } else if (data.purp == "createroom") {
-        conHandler.roomCode = data.data.roomCode;
-        console.log(conHandler.roomCode);
-        $('#createGamePin').html(`<b>${conHandler.roomCode}</b><br>`);
-    } else if (data.purp == "joinroom") {
-        conHandler.playerNumber = data.data.playerNumber;
-        if (data.data.roomCode == -1) {
-            console.log("Error joining room");
-        } else {
-            conHandler.roomCode = data.data.roomCode;
-            conHandler.isHost = false;
+
+    if(data.purp == "jointeam"){
+        if(data.data.success == false){
+            //Todo - Handle error
+            console.log("Failed to joined team");
+            return;
         }
-    } else if (data.purp == "start") {
-        conHandler.startGame(data.data.map);
-    } else if(data.purp == "end"){
-        conHandler.game.endGame();
-    } else if(data.purp == "updateWaitingRoom"){
-        if(conHandler.isHost == true){
-            $('#createGamePlayers').html(`Players: ${data.data.numPlayers}`);
-        }else{
-            $('#waitingRoomPlayers').html(`Players: ${data.data.numPlayers}`);
-        }
+        console.log("Joined team");
+        conHandler.answer();
+        //Change screen or something
+    } else if(data.purp == "error"){
+        console.log("Error: ", data.data.error);
     } else {
         console.log("Error purpose not recognise");
     }
@@ -172,81 +108,8 @@ conHandler.socket.onerror = function (error) {
 $(document).ready(function () {
     $('#namePage').show();
 
-    $('#homePage').hide();
-    $('#gamePage').hide();
-    $('#helpScreen').hide();
-    $('#createGamePage').hide();
-    $('#waitingRoom').hide();
-
     $('#submitNameButton').click(function () {
-        conHandler.playerName = $('#nameInput').val();
-        if (conHandler.playerName.length > 0) {
-            $('#namePage').hide();
-            $('#homePage').show();
-        }
-    });
-
-    $('#joinGameButton').click(function () {
-        conHandler.roomCode = $('#codeInput').val().toLowerCase();
-        conHandler.joinRoom();
-        $('#homePage').hide();
-        $('#gamePage').hide();
-        $('#helpScreen').hide();
-        $('#createGamePage').hide();
-        $('#waitingRoom').show();
-
-        $('#waitingRoomPin').html(conHandler.roomCode);
-    });
-
-    $('#createGameButton').click(function () {
-        $('#homePage').hide();
-        $('#gamePage').hide();
-        $('#helpScreen').hide();
-        $('#createGamePage').show();
-        conHandler.createRoom();
-        $('#createGamePlayers').html(`Players: ${1}`);
-    });
-
-    $('#createBackButton').click(function () {
-        conHandler.destroyRoom();
-        $('#homePage').show();
-        $('#gamePage').hide();
-        $('#helpScreen').hide();
-        $('#createGamePage').hide();
-    });
-
-    $('#createStartButton').click(function () {
-        conHandler.causeStartGame();
-        $('#homePage').show();
-        $('#gamePage').hide();
-        $('#helpScreen').hide();
-        $('#createGamePage').hide();
-    });
-
-    $('#exitGame').click(function(){
-        window.location = "";
-    });
-
-    $('#newGame').click(function(){
-        conHandler.nextGame();
-        $('#homePage').hide();
-        $('#gamePage').show();
-        $('#helpScreen').hide();
-        $('#createGamePage').hide();
-        $('#waitingRoom').hide();
-    });
-
-    $('#help').click(function(){
-        $('#homePage').hide();
-        $('#gamePage').hide();
-        $('#helpScreen').show();
-        $('#createGamePage').hide();
-    });
-
-    $('#helpScreenBack').click(function(){
-        $('#homePage').show();
-        $('#gamePage').hide();
-        $('#helpScreen').hide();
-        $('#createGamePage').hide();
+        conHandler.teamCode = $('#nameInput').val();
+        conHandler.joinTeam();        
     });
 });

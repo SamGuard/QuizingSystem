@@ -2,7 +2,7 @@ const http = require('http');//For the http server
 const webSocketServer = require("websocket").server;
 const app = require("./server/app");//Controls the http routing
 const shortID = require("short-id");//Used to generate the room codes
-const {ID, Room, Map} = require('./server/classes.js')
+const {ID, Team, Quiz} = require('./server/classes.js')
 
 
 const port = process.env.PORT || 3000;//Use port 3000 unless process.env.PORT is set as this variable is set when deployed to heroku
@@ -43,11 +43,12 @@ All socket messeges go into the function handleMessage
 // MORE CODE IN classes.js |
 //--------------------------
 
-rooms = [];//Stores all the rooms
+let quiz = new Quiz();
 
-//Generates an id for the room code
-function genCode() {
-    return shortID.generate().toLowerCase();
+teams = [];//Stores all the rooms
+
+for(let i = 0; i < 100; i++){
+    teams.push(new Team(i.toString(), null));
 }
 
 //This should be implemented, basically a way of filtering IPs. Such as multiple users from the same IP
@@ -59,7 +60,7 @@ function isOriginAllowed(ip) {
 //Starts a new room and sets host
 function addRoom(id) {
     let code = genCode();//Rooms code
-    rooms.push(new Room(code, id));
+    teams.push(new Room(code, id));
     console.log("Created room, IP: " + id.ip + " room code: " + code);
     return code;
 }
@@ -73,9 +74,9 @@ function compareID(id1, id2) {
 }
 
 //finds a room by its room code
-function findRoomByCode(roomCode) {
-    for (let i = 0; i < rooms.length; i++) {
-        if (rooms[i].code == roomCode) {
+function findTeamByCode(code) {
+    for (let i = 0; i < teams.length; i++) {
+        if (teams[i].code == code) {
             return i;
         }
     }
@@ -93,179 +94,87 @@ function findPlayerByID(id) {
 }
 
 //When a new client connects, this function is called to give it an ID so we can identify who
-//The message is coming from
+//The message is coming from. Takes a team code and team name
 function setID(mess, conn) {
     conn.id = new ID(conn.remoteAddress, mess.id);
 }
 
-//Calls addRoom and send back the data, not too sure why its in 2 seperate functions tho
-function createRoom(mess, conn) {
-    conn.sendUTF(JSON.stringify({
-        purp: "createroom",
-        data: { roomCode: addRoom(conn.id) },
-        time: Date.now(),
-        id: conn.id.id
-    }));
-}
-
-//Allows a client to join an existing room given a room code, as well as sends out a 
-//Message to all other clients saying another player has connected
-function joinRoom(mess, conn) {
-    conn.id = new ID(conn.remoteAddress, mess.id);
-    let roomIndex = findRoomByCode(mess.data.roomCode);
-
-    if (roomIndex != -1) {
-        conn.sendUTF(JSON.stringify({
-            purp: "joinroom",
-            data: { roomCode: rooms[roomIndex].code, playerNumber: rooms[roomIndex].addPlayer(new ID(conn.remoteAddress, mess.id)) },
-            time: Date.now(),
-            id: conn.id.id
-        }));
-
-        let clients = rooms[roomIndex].getClients();
-
-        for(let i = 0; i < clients.length; i++){
-            let connIndex = findPlayerByID(clients[i]);
-            connections[connIndex].sendUTF(JSON.stringify({
-                purp: "updateWaitingRoom",
-                data: { numPlayers: clients.length },
-                time: Date.now(),
-                id: connections[connIndex].id.id
-            }));
-        }
-    } else {
-        conn.sendUTF(JSON.stringify({
-            purp: "joinroom",
-            data: { roomCode: -1 },
-            time: Date.now(),
-            id: conn.id.id
-        }));
-    }
-}
-
-//Starts game on all players, can only be done by host
-function startRoom(mess, conn){
-    let roomID = findRoomByCode(mess.data.roomCode);
-    if(roomID != -1 && rooms[roomID].isHost(conn.id)){
-        let clients = rooms[roomID].getClients();
-        let mapData = rooms[roomID].getMap();
-        for(let i = 0; i < clients.length; i++){
-            let conn = findPlayerByID(clients[i]);
-            connections[conn].sendUTF(JSON.stringify({
-                purp: "start",
-                data: {map: mapData},
-                time: Date.now(),
-                id: connections[conn].id.id
-            }));
-        }
-    }
-}
-
-//Removes room, can only be done by host
-function destroyRoom(mess, conn) {
-    let roomID = new ID(conn.remoteAddress, mess.roomID);
-    let roomIndex = findRoomByCode(roomID);
-    if (roomIndex != -1 && rooms[roomID].isHost(conn.id)) {
-        rooms.splice(roomIndex, 1);
-    }
-}
-
-//Removes player from room
-function removePlayer(id) {
-    let playerIndex = findPlayerByID(id);
-
-    if (playerIndex != -1) {
-        connections.splice(playerIndex, 1);
-    } else {
+function joinTeam(mess, conn){
+    let code = mess.data.code;
+    if(code == undefined){
+        console.log("error in set id");
         return;
     }
 
-    for(let i = 0; i < rooms.length; i++){
-        for(let j = 0; j < rooms[i].clients.length; j++){
-            if(compareID(id, rooms[i].clients[j]) == true){
-                rooms[i].clients.splice(j, 1);
-                if(rooms[i].length == 0){
-                    rooms.splice(i, 1);
-                }
-                return;
-            }
-        }
-    }
+    let teamIndex = findTeamByCode(code)
 
-}
-
-//Requests the game state to change, can only be done by host
-//This is things such as: accept responses, next question etc 
-function req(mess, conn){
-    let roomID = mess.data.roomCode;
-    let data = mess.data.objects;
-    let player = mess.data.player;
-
-    let room = findRoomByCode(roomID);
-    if(room.isHost(conn.id)){
-        let dataOut = rooms[room].updateGame(data, player);
-        let clients = rooms[room].getClients();
-        for(let i = 0; i < clients.length; i++){
-            let connIndex = findPlayerByID(clients[i]);
-            connections[connIndex].sendUTF(JSON.stringify({
-                purp: "update",
-                data: {objects: dataOut.objects, players: dataOut.players},
-                time: Date.now(),
-                id: connections[connIndex].id.id
-            }));   
-        }
-    }
-}
-
-function endGame(mess, conn){
-    let roomID = mess.data.roomCode;
-    let data = mess.data.objects;
-
-    let room = findRoomByCode(roomID);
-    let clients = rooms[room].getClients();
-
-    for(let i = 0; i < clients.length; i++){
-        let connIndex = findPlayerByID(clients[i]);
-        connections[connIndex].sendUTF(JSON.stringify({
-            purp: "end",
-            data: {},
+    if(teamIndex == -1){
+        conn.sendUTF(JSON.stringify({
+            purp: "error",
+            data: { error: "incorrect team code" },
             time: Date.now(),
-            id: connections[connIndex].id.id
-        }));   
+            id: mess.id
+        }));
+        return;
     }
+
+    let team = teams[teamIndex];
+    if(team.name == null && mess.data.name != undefined){
+        team.name = mess.data.name;
+    }
+
+    conn.sendUTF(JSON.stringify({
+        purp: "jointeam",
+        data: { success: true },
+        time: Date.now(),
+        id: mess.id
+    }));
 }
 
+function getQuest(mess, conn){
+    conn.sendUTF(JSON.stringify({
+        purp: "getquest",
+        data: { quest: quiz.getQuestion() },
+        time: Date.now(),
+        id: mess.id
+    }));
+    return;
+}
 
-//Needs replacing (if its actually needed)
-function newGame(mess, conn){
-    let roomID = mess.data.roomCode;
-    let data = mess.data.objects;
+function submit(mess, conn){
+    let code = mess.data.code;
+    if(code == undefined){
+        console.log("error in set id");
+        return;
+    }
 
-    let room = findRoomByCode(roomID);
+    let teamIndex = findTeamByCode(code);
 
-    rooms[room].newMap();
+    if(teamIndex == -1){
+        conn.sendUTF(JSON.stringify({
+            purp: "error",
+            data: { error: "incorrect team code" },
+            time: Date.now(),
+            id: mess.id
+        }));
+        return;
+    }
 
-    startRoom(mess, conn);
+    let team = teams[teamIndex];
+
+    team.addAnswer(quiz.round, quiz.q, mess.data.answer);
 }
 
 function handleMessage(mess, conn) {
     mess = JSON.parse(mess);
     if (mess.purp == "setid") {
         setID(mess, conn);
-    } else if (mess.purp == "createroom") {
-        createRoom(mess, conn);
-    } else if (mess.purp == "joinroom") {
-        joinRoom(mess, conn);
-    } else if(mess.purp == "startroom"){
-        startRoom(mess, conn);
-    } else if (mess.purp == "destroyroom") {
-        destroyRoom(mess, conn);
-    } else if(mess.purp == "req"){
-        req(mess, conn);
-    } else if(mess.purp == "end"){
-        endGame(mess, conn);
-    } else if(mess.purp == "newGame"){
-        newGame(mess, conn);
+    } else if(mess.purp == "jointeam"){
+        joinTeam(mess, conn)
+    } else if(mess.purp == "getquest"){
+        getQuest(mess, conn);
+    } else if(mess.purp == "submit"){
+        submit(mess, conn);
     } else {
         conn.sendUTF(JSON.stringify({
             purp: "error",
@@ -275,6 +184,16 @@ function handleMessage(mess, conn) {
         }));
     }
 }
+
+function removePlayer(conn){
+    let playerIndex = findPlayerByID(conn.id);
+    if(playerIndex == -1){
+        return;
+    }
+
+    connections.splice(playerIndex, 1);
+}
+
 
 var WebSocketServer = require('websocket').server;
 

@@ -1,0 +1,12 @@
+{
+  "rounds": [
+    {
+      "round": 1,
+      "questions": 5
+    },
+    {
+      "round": 2,
+      "questions": 10
+    }
+  ]
+}

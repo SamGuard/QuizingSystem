@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/SamGuard/OxfordHack2020.git"
   },
+  "nodemonConfig": {
+    "ignore": ["server/answers/*.json"]
+  },
   "author": "",
   "license": "ISC",
   "bugs": {
