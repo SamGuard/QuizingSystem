@@ -2,8 +2,13 @@ const http = require('http');//For the http server
 const webSocketServer = require("websocket").server;
 const app = require("./server/app");//Controls the http routing
 const shortID = require("short-id");//Used to generate the room codes
+const sha256 = require("sha256");
 const {ID, Team, Quiz} = require('./server/classes.js')
 
+//Has to be global as needed in the api and socket
+global.quiz = new Quiz();
+global.teams = [];//Stores all the rooms
+global.connections = [];
 
 const port = process.env.PORT || 3000;//Use port 3000 unless process.env.PORT is set as this variable is set when deployed to heroku
 
@@ -43,9 +48,9 @@ All socket messeges go into the function handleMessage
 // MORE CODE IN classes.js |
 //--------------------------
 
-let quiz = new Quiz();
+let teams = global.teams;
+let quiz = global.quiz;
 
-teams = [];//Stores all the rooms
 
 for(let i = 0; i < 100; i++){
     teams.push(new Team(i.toString(), null));
@@ -142,9 +147,12 @@ function getQuest(mess, conn){
 }
 
 function submit(mess, conn){
+    if(quiz.isOpen == false){
+        return;
+    }
     let code = mess.data.code;
     if(code == undefined){
-        console.log("error in set id");
+        console.log("error in submit");
         return;
     }
 
@@ -162,7 +170,7 @@ function submit(mess, conn){
 
     let team = teams[teamIndex];
 
-    team.addAnswer(quiz.round, quiz.q, mess.data.answer);
+    team.addAnswer(quiz.round, quiz.q, mess.data.answer + mess.time);
 }
 
 function handleMessage(mess, conn) {
@@ -202,7 +210,7 @@ wss = new WebSocketServer({
     autoAcceptConnections: false
 });
 
-let connections = [];
+let connections = global.connections;
 
 wss.on('request', function (request) {
     if (!isOriginAllowed(request.origin)) {

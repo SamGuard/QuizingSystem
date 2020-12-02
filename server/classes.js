@@ -11,12 +11,39 @@ class ID {
 
 class Quiz{
     constructor(){
-        this.quiz = fs.readFileSync("./server/questions.json");
+        this.quiz = JSON.parse(fs.readFileSync("./server/questions.json"));
+        
+        this.isOpen = false;
+        this.round = 0;
+        this.q = 0;
 
-        this.round = 1;
-        this.q = 1;
 
+    }
 
+    open(){
+        this.isOpen = true;
+        let connections = global.connections;
+        for(let i = 0; i < connections.length; i++){
+            connections[i].sendUTF(JSON.stringify({
+                purp: "sub",
+                data: { open: true, quest: this.getQuestion() },
+                time: Date.now(),
+                id: connections[i].id.id
+            }));
+        }
+    }
+
+    close(){
+        this.isOpen = false;
+        let connections = global.connections;
+        for(let i = 0; i < connections.length; i++){
+            connections[i].sendUTF(JSON.stringify({
+                purp: "sub",
+                data: { open: false, quest: this.getQuestion() },
+                time: Date.now(),
+                id: connections[i].id.id
+            }));
+        }
     }
 
     getQuestion(){
@@ -24,29 +51,35 @@ class Quiz{
     }
 
     forward(){
-        if(this.q == this.quiz.questions){
-            if(this.round == this.quiz.rounds.length){
-                return {"round": -1, "quest": -1};
+        if(this.q != -1 || this.round != -1){
+            if(this.q == this.quiz["round" + this.round.toString()].questions){
+                if(this.round == this.quiz.rounds){
+                    this.q = -1;
+                    this.round = -1;
+                } else{
+                    this.round++;
+                    this.q = 0;
+                }
+            } else {
+                this.q++;
             }
-            this.round++;
-            this.q = 1;
-        } else {
-            this.q++;
         }
-        return getQuestion();
+        return this.getQuestion();
     }
 
     backward(){
-        if(this.q == 1){
-            if(this.round == 1){
-                return {"round": -1, "quest": -1};
+        if(this.q == -1 || this.round == -1){
+            this.round = this.quiz.rounds;
+            this.q = this.quiz["round" + this.round.toString()].questions;
+        } else if(this.q == 0){
+            if(this.round != 0){
+                this.round--;
+                this.q = this.quiz["round" + this.round.toString()].questions;
             }
-            this.round--;
-            this.q = 1;
         } else {
             this.q--;
         }
-        return getQuestion();
+        return this.getQuestion();
     }
 }
 

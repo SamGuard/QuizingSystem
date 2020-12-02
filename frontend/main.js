@@ -40,6 +40,16 @@ class ConnectionHandler {
         this.socket.send(data);
     }
 
+    getQuestion(){
+        let data = JSON.stringify({
+            purp: "getquest",
+            data: {},
+            time: Date.now(),
+            id: this.id
+        });
+        this.socket.send(data);
+    }
+
     answer(){
         let data = JSON.stringify({
             purp: "submit",
@@ -84,6 +94,10 @@ conHandler.socket.onmessage = function (event) {
         console.log("Joined team");
         conHandler.answer();
         //Change screen or something
+    } else if(data.purp == "getquest"){
+        console.log(data.data.quest);
+    } else if(data.purp == "sub"){
+        console.log(data.data);
     } else if(data.purp == "error"){
         console.log("Error: ", data.data.error);
     } else {
@@ -109,7 +123,11 @@ $(document).ready(function () {
     $('#namePage').show();
 
     $('#submitNameButton').click(function () {
-        conHandler.teamCode = $('#nameInput').val();
-        conHandler.joinTeam();        
+        if(conHandler.teamCode == null){
+            conHandler.teamCode = $('#nameInput').val();
+            conHandler.joinTeam();        
+        } else {
+            conHandler.getQuestion();
+        }
     });
 });

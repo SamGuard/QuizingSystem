@@ -1,12 +1,12 @@
 {
-  "rounds": [
-    {
-      "round": 1,
-      "questions": 5
-    },
-    {
-      "round": 2,
-      "questions": 10
-    }
-  ]
+  "rounds": 2,
+  "round0": {
+    "questions": 0
+  },
+  "round1": {
+    "questions": 3
+  },
+  "round2": {
+    "questions": 4
+  }
 }
