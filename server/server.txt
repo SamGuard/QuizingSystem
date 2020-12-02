@@ -2,15 +2,18 @@ How to use the server sockets
 
 Start
 To start the connection just do a normal socket init once connected (socket.onopen event) send a setid which will set
-the way the server identifies the client. Previously this has been a random string, but now it'll be their 
-team code.
+the way the server identifies the client. 
+
+Joining a team
+Send a socket event with the purp jointeam with the data.code = the team code, and then data.name = the team name (this 
+is optional, only needed if this is the first time someone is joining this team)
 
 Getting Question
 send a message with purp getquest to get the round and question. Round 0 will be returned if the game hasnt started
 and question 0 will be returned if the round hasnt started.
 
 Answering
-All you do is send the answer with the purp of "submit" and then set data.answer to the answer
+All you do is send the answer with the purp of "submit" and then set data.answer to the answer and data.code = team code
 
 
 
