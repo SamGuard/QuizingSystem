@@ -33,7 +33,7 @@ class ConnectionHandler {
     joinTeam() {
         let data = JSON.stringify({
             purp: "jointeam",
-            data: { code: this.teamCode, name: this.teamName },
+            data: { code: this.teamCode, name: this.teamName, playerNames: "yo mama, dat boi" },
             time: Date.now(),
             id: this.id
         });
@@ -104,7 +104,6 @@ conHandler.socket.onmessage = function (event) {
             $('#namePage').hide();
         }
         
-        conHandler.answer();
         //Change screen or something
     } 
     else if (data.purp == "getquest") {
@@ -152,6 +151,8 @@ $(document).ready(function () {
 
     $('#getQuestionButton').click(function () {
         conHandler.getQuestion();
+        conHandler.answer();
+
     });
 
 });

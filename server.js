@@ -53,7 +53,7 @@ let quiz = global.quiz;
 
 
 for(let i = 0; i < 100; i++){
-    teams.push(new Team(i.toString(), null));
+    teams.push(new Team(i.toString()));
 }
 
 //This should be implemented, basically a way of filtering IPs. Such as multiple users from the same IP
@@ -125,7 +125,7 @@ function joinTeam(mess, conn){
     
     let team = teams[teamIndex];
     if(team.name == null && mess.data.name != null){
-        team.name = mess.data.name;
+        team.setup(mess.data.name, mess.data.playerNames);
     }
 
     conn.sendUTF(JSON.stringify({
@@ -170,7 +170,16 @@ function submit(mess, conn){
 
     let team = teams[teamIndex];
 
-    team.addAnswer(quiz.round, quiz.q, mess.data.answer + mess.time);
+    if(team.isSetup == false){
+        conn.sendUTF(JSON.stringify({
+            purp: "error",
+            data: { error: "team not setup" },
+            time: Date.now(),
+            id: mess.id
+        }));
+    }
+
+    team.addAnswer(quiz.round, quiz.q, mess.data.answer);
 }
 
 function handleMessage(mess, conn) {

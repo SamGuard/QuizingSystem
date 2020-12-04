@@ -31,6 +31,38 @@ app.post("/control", function(req, res, next){
     }
 });
 
+app.post("/answers", function(req, res, next){
+    let secret = req.body.secret;
+    if(secret == undefined || sha256(secret) != "3f3be1a9d2b99e7fa83031f9c467d7e1609fd1b37d20c993d6f8e2b07f142e45"){
+        res.send("your secret is wrong");
+        return;
+    }
+
+    let answers = [];
+
+    for(let i = 0; i < global.teams.length; i++){
+        if(global.teams[i].name != null){
+            answers.push( global.teams[i].data);
+        }
+    }
+
+    res.send(JSON.stringify(answers));
+});
+
+app.post("/mark", function(req, res, next){
+    let answer = answer;
+    let round = req.body.round;
+    let quest = req.body.question;
+    let correct= req.body.correct;
+    let teamCode = req.body.code;
+
+    for(let i = 0; i < global.teams.length; i++){
+        if(global.teams[i].code == teamCode){
+            
+        }
+    }
+
+});
 
 app.get("/", function (req, res, next) {
     fs.readFile(process.cwd() + "/frontend/main.html", "utf8", function (err, data) {
