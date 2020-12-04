@@ -17,9 +17,9 @@ app.post("/control", function (req, res, next) {
     }
     let command = req.body.command;
     if (command == "next") {
-        res.send(global.quiz.forward());
+        res.send(JSON.stringify(global.quiz.forward()));
     } else if (command == "prev") {
-        res.send(global.quiz.backward());
+        res.send(JSON.stringify(global.quiz.backward()));
     } else if (command == "open") {
         global.quiz.open();
         res.send(JSON.stringify({ success: true, error: "" }));
