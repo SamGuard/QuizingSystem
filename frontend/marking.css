@@ -20,9 +20,9 @@
     font-weight: 400;
     font-size: 30px;
     color: #2C3E50;
-    text-transform: uppercase;
-    text-align: center;
-    margin: 10px;
+    /* text-transform: uppercase; */
+    text-align: left;
+    margin: 2px 10px;
 }
   
 .markboxes {
@@ -32,11 +32,19 @@
 }
 
 .markbox {
+    font-weight: 400;
+    font-size: 30px;
+    color: #2C3E50;
+    /* text-transform: uppercase; */
+    text-align: center;
+    user-select: none;
     display: inline-block;
     width: 400px;
-    height: 200px;
-    border: 1px solid black;
+    height: 100px;
+    background-color: #f0f0f0;
+    /* border: 1px solid black; */
     vertical-align: middle;
+    padding: 10px;
     margin: 10px;
 }
 
@@ -45,9 +53,80 @@
 }
 
 .buttons {
+    position: relative;
+    /* border: 1px solid black; */
     width: 100%;
     text-align:center;
     margin: auto;
 }
 
+.stats {
+    position: absolute;
+    text-align: left;
+    bottom: 0;
+    left: 0;
+}
 
+#password {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 10px;
+}
+
+.draw-border {
+    box-shadow: inset 0 0 0 4px #2C3E50;
+    color: #2C3E50;
+    transition: color 0.25s 0.0833333333s;
+    position: relative;
+  }
+  .draw-border::before, .draw-border::after {
+    border: 0 solid transparent;
+    box-sizing: border-box;
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 0;
+    right: 0;
+  }
+  .draw-border::before {
+    border-bottom-width: 4px;
+    border-left-width: 4px;
+  }
+  .draw-border::after {
+    border-top-width: 4px;
+    border-right-width: 4px;
+  }
+  .draw-border:hover {
+    color: #2DCC6F;
+  }
+  .draw-border:hover::before, .draw-border:hover::after {
+    border-color: #3597DA;
+    transition: border-color 0s, width 0.15s, height 0.15s;
+    width: 100%;
+    height: 100%;
+  }
+  .draw-border:hover::before {
+    transition-delay: 0s, 0s, 0.15s;
+  }
+  .draw-border:hover::after {
+    transition-delay: 0s, 0.15s, 0s;
+  }
+  
+  .btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    line-height: 1.5;
+    font: 700 1.2rem Roboto;
+    text-transform: uppercase;
+    padding: 1em 2em;
+    letter-spacing: 0.05rem;
+    width: 15%;
+    margin: 10px;
+  }
+  .btn:focus {
+    outline: 2px dotted #2C3E50;
+  }
