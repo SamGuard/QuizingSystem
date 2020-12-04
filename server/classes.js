@@ -138,6 +138,10 @@ class Team {
             this.data.answers["round" + round.toString()]["question" + i.toString()] = {answer: ans["question" + i.toString()], correct: false, marked: false};
         }
 
+        this.save();
+    }
+
+    save(){
         fs.writeFile("./server/answers/" + this.code + ".json", JSON.stringify(this.data, null, 2), function(err){
             if(err){console.log(err);}
         });
