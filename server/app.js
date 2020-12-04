@@ -88,6 +88,16 @@ app.get("/admin", function (req, res, next) {
     });
 });
 
+app.get("/leaderboard", function (req, res, next) {
+    fs.readFile(process.cwd() + "/frontend/leaderboard.html", "utf8", function (err, data) {
+        if (err) {
+            res.send("<!DOCTYPE html><html>Error 500: File not found!</html>");
+            return;
+        }
+        res.send(data);
+    });
+});
+
 app.get("/", function (req, res, next) {
     console.log("here2");
     fs.readFile(process.cwd() + "/frontend/main.html", "utf8", function (err, data) {
