@@ -39,3 +39,15 @@
     vertical-align: middle;
     margin: 10px;
 }
+
+.buttons div {
+    display: inline-block;
+}
+
+.buttons {
+    width: 100%;
+    text-align:center;
+    margin: auto;
+}
+
+
