@@ -41,7 +41,7 @@ class ConnectionHandler {
         this.socket.send(data);
     }
 
-    getQuestion(){
+    getRound(){
         let data = JSON.stringify({
             purp: "getround",
             data: {},
@@ -104,11 +104,10 @@ conHandler.socket.onmessage = function (event) {
             $('#questionPage').show();
             $('#namePage').hide();
         }
-        
         //Change screen or something
     } 
     else if (data.purp == "getround") {
-        console.log(data.data.quest);
+        console.log(data.data.round);
     } 
     else if (data.purp == "sub") {
         console.log(data.data);
@@ -152,7 +151,7 @@ $(document).ready(function () {
     });
 
     $('#getQuestionButton').click(function () {
-        conHandler.getQuestion();
+        conHandler.getRound();
         conHandler.answer();
 
     });
