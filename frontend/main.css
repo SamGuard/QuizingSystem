@@ -136,3 +136,7 @@ input:focus {
   font: 5ch droid sans mono, Roboto, monospace;
   text-transform: uppercase;
 }
+.answerBox {
+  width: 80%;
+  letter-spacing: 0.05ch;
+}

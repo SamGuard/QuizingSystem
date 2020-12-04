@@ -178,7 +178,7 @@ function submit(mess, conn){
             id: mess.id
         }));
     }
-
+    console.log(mess.data);
     if(quiz.round != -1){
         team.addAnswers(quiz.round, quiz.quiz["round" + quiz.round].questions, mess.data.answers);
     }

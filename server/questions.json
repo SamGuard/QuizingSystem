@@ -1,15 +1,31 @@
 {
-  "rounds": 2,
+  "rounds": 6,
   "round0": {
     "name": "rrrrr",
     "questions": 0
   },
   "round1": {
-    "name": "aaaaa",
-    "questions": 3
+    "name": "General",
+    "questions": 5
   },
   "round2": {
-    "name": "bbbbb",
-    "questions": 4
+    "name": "General",
+    "questions": 5
+  },
+  "round3": {
+    "name": "Fresh",
+    "questions": 5
+  },
+  "round4": {
+    "name": "General",
+    "questions": 5
+  },
+  "round5": {
+    "name": "General",
+    "questions": 5
+  },
+  "round6": {
+    "name": "Twitter",
+    "questions": 5
   }
 }

@@ -41,20 +41,10 @@ class ConnectionHandler {
         this.socket.send(data);
     }
 
-    getRound(){
-        let data = JSON.stringify({
-            purp: "getround",
-            data: {},
-            time: Date.now(),
-            id: this.id
-        });
-        this.socket.send(data);
-    }
-
-    answer(){
+    answer(answers){
         let data = JSON.stringify({
             purp: "submit",
-            data: { code: this.teamCode, answers: {question1: "1", question2:"awdad", question3: "112341"} },
+            data: { code: this.teamCode, answers: answers},
             time: Date.now(),
             id: this.id
         });
@@ -93,6 +83,8 @@ conHandler.socket.onmessage = function (event) {
             return;
         }
         conHandler.teamName = data.data.name;
+        console.log(data.data);
+        updateRound(data.data);
         console.log("Joined team");
         $('#codePage').hide();
         if (conHandler.teamName == null) {
@@ -108,9 +100,12 @@ conHandler.socket.onmessage = function (event) {
     } 
     else if (data.purp == "getround") {
         console.log(data.data);
+        updateRound(data.data);
     } 
     else if (data.purp == "sub") {
         console.log(data.data);
+        updateRound(data.data);
+
     } 
     else if (data.purp == "error") {
         console.log("Error: ", data.data.error);
@@ -118,8 +113,43 @@ conHandler.socket.onmessage = function (event) {
     else {
         console.log("Error purpose not recognise");
     }
-
 };
+
+function updateRound(data) {
+    if (data.round.round == 0) {
+        console.log("please wait for quiz");
+        $('#roundName').hide();
+        $('#questionBlock').hide();
+        $('#roundInfo').text("Please wait for the quiz to begin!");
+        $('#roundInfo').show();
+
+        // please wait for quiz to begin
+    }
+    else {
+        if (data.open == false) {
+            console.log("please wait for round");
+            $('#roundName').show();
+            $('#roundName').text("Round " + data.round.round + " - " + data.round.name);
+            $('#questionBlock').hide();
+            $('#roundInfo').text("Please wait for the next round to begin!");
+            $('#roundInfo').show();
+            // please wait for round to begin
+        }
+        else {
+            console.log("display question boxes");
+            $('#roundName').show();
+            $('#roundName').text("Round " + data.round.round + " - " + data.round.name);
+            $('#questionBlock').show();
+            $('#answerBoxes').empty();
+            for (let i = 1; i < 6; i++) {
+                $('#answerBoxes').append("Question " + i + ":  <input class='answerBox' id='answer" + i + "' type='text' spellcheck='false'><br><br>");
+            }
+
+            $('#roundInfo').hide();
+            // display question boxes
+        }
+    }
+}
 
 conHandler.socket.onclose = function (event) {
     if (event.wasClean) {
@@ -150,10 +180,9 @@ $(document).ready(function () {
         conHandler.joinTeam();
     });
 
-    $('#getQuestionButton').click(function () {
-        conHandler.getRound();
-        conHandler.answer();
-
+    $('#submitRoundButton').click(function () {
+        let x = {question1: $('#answer1').val(), question2: $('#answer2').val(), question3: $('#answer3').val(), question4: $('#answer4').val(), question5: $('#answer5').val()};
+        conHandler.answer(x);
     });
 
 });
