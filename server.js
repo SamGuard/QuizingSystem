@@ -138,8 +138,8 @@ function joinTeam(mess, conn){
 
 function getQuest(mess, conn){
     conn.sendUTF(JSON.stringify({
-        purp: "getquest",
-        data: { quest: quiz.getQuestion() },
+        purp: "getround",
+        data: { quest: quiz.getRound() },
         time: Date.now(),
         id: mess.id
     }));
@@ -190,7 +190,7 @@ function handleMessage(mess, conn) {
         setID(mess, conn);
     } else if(mess.purp == "jointeam"){
         joinTeam(mess, conn)
-    } else if(mess.purp == "getquest"){
+    } else if(mess.purp == "getround"){
         getQuest(mess, conn);
     } else if(mess.purp == "submit"){
         submit(mess, conn);

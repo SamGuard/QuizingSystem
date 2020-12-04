@@ -48,6 +48,16 @@ class Quiz {
         return { "round": this.round, "quest": this.q };
     }
 
+    getRound(){
+        if(this.round != -1 && this.q != -1){
+            let x = this.quiz["round" + this.round.toString()];
+            x.round = this.round;
+            return x;
+        } else {
+            return {round: -1, questions: -1, name: "Quiz End"};
+        }
+    }
+
     forward() {
         if (this.q != -1 || this.round != -1) {
             if (this.q == this.quiz["round" + this.round.toString()].questions) {
@@ -67,7 +77,7 @@ class Quiz {
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF(JSON.stringify({
                 purp: "getquest",
-                data: { quest: this.getQuestion() },
+                data: { quest: this.getQuestion(), round: this.quiz["round" + this.getQuestion().round.toString()] },
                 time: Date.now(),
                 id: connections[i].id.id
             }));
@@ -93,7 +103,7 @@ class Quiz {
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF(JSON.stringify({
                 purp: "getquest",
-                data: { quest: this.getQuestion() },
+                data: { round: this.quiz["round" + this.getQuestion().round.toString()] },
                 time: Date.now(),
                 id: connections[i].id.id
             }));
