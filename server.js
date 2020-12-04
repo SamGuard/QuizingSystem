@@ -124,7 +124,7 @@ function joinTeam(mess, conn){
     }
     
     let team = teams[teamIndex];
-    if(team.name == null && mess.data.name != null){
+    if(team.name == null && mess.data.name != null && mess.data.playerNames != null){
         team.setup(mess.data.name, mess.data.playerNames);
     }
 

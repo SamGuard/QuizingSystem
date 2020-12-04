@@ -14,6 +14,7 @@ class ConnectionHandler {
         this.gameRunning = false;
         this.teamCode = null;
         this.teamName = null;
+        this.playerNames = null;
         this.id = makeid(12);
         console.log("Your id is: " + this.id);
 
@@ -33,7 +34,7 @@ class ConnectionHandler {
     joinTeam() {
         let data = JSON.stringify({
             purp: "jointeam",
-            data: { code: this.teamCode, name: this.teamName, playerNames: "yo mama, dat boi" },
+            data: { code: this.teamCode, name: this.teamName, playerNames: this.playerNames },
             time: Date.now(),
             id: this.id
         });
@@ -146,6 +147,7 @@ $(document).ready(function () {
 
     $('#submitNameButton').click(function () {
         conHandler.teamName = $('#nameInput').val();
+        conHandler.playerNames = $('#playerNamesInput').val();
         conHandler.joinTeam();
     });
 
