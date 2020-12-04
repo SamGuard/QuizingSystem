@@ -43,7 +43,7 @@ class ConnectionHandler {
 
     getQuestion(){
         let data = JSON.stringify({
-            purp: "getquest",
+            purp: "getround",
             data: {},
             time: Date.now(),
             id: this.id
@@ -107,7 +107,7 @@ conHandler.socket.onmessage = function (event) {
         
         //Change screen or something
     } 
-    else if (data.purp == "getquest") {
+    else if (data.purp == "getround") {
         console.log(data.data.quest);
     } 
     else if (data.purp == "sub") {
