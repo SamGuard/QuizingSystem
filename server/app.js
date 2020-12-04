@@ -77,7 +77,19 @@ app.post("/mark", function (req, res, next) {
     res.send("{success: true}");
 });
 
+app.get("/admin", function (req, res, next) {
+    console.log("here1");
+    fs.readFile(process.cwd() + "/frontend/marking.html", "utf8", function (err, data) {
+        if (err) {
+            res.send("<!DOCTYPE html><html>Error 500: File not found!</html>");
+            return;
+        }
+        res.send(data);
+    });
+});
+
 app.get("/", function (req, res, next) {
+    console.log("here2");
     fs.readFile(process.cwd() + "/frontend/main.html", "utf8", function (err, data) {
         if (err) {
             res.send("<!DOCTYPE html><html>Error 500: File not found!</html>");
