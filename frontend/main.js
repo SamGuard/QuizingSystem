@@ -33,7 +33,7 @@ class ConnectionHandler {
     joinTeam() {
         let data = JSON.stringify({
             purp: "jointeam",
-            data: { code: this.teamCode, name: "team1" },
+            data: { code: this.teamCode, name: "team1", playerNames: "yo mama, dat boi"},
             time: Date.now(),
             id: this.id
         });
