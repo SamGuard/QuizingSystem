@@ -120,10 +120,10 @@ body {
 input {
   border: none;
   padding: 0;
-  width: 20ch;
+  width: 50%;
   background: repeating-linear-gradient(0deg, dimgrey 0, dimgrey 1ch, transparent 0, transparent 1.5ch) 0 100%/10ch 2px repeat-x;
   font: 3ch droid sans mono, Roboto, monospace;
-  letter-spacing: 0.5ch;
+  letter-spacing: 0.05ch;
   color: #2C3E50;
   margin-bottom: 15px;
 }
@@ -135,8 +135,10 @@ input:focus {
 #codeInput {
   font: 5ch droid sans mono, Roboto, monospace;
   text-transform: uppercase;
+  width: 20ch;
+  letter-spacing: 0.5ch;
+
 }
 .answerBox {
   width: 80%;
-  letter-spacing: 0.05ch;
 }
