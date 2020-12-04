@@ -139,7 +139,7 @@ function joinTeam(mess, conn){
 function getQuest(mess, conn){
     conn.sendUTF(JSON.stringify({
         purp: "getround",
-        data: { quest: quiz.getRound() },
+        data:  quiz.getRound(),
         time: Date.now(),
         id: mess.id
     }));
