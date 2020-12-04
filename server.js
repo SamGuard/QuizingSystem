@@ -51,9 +51,11 @@ All socket messeges go into the function handleMessage
 let teams = global.teams;
 let quiz = global.quiz;
 
+teamCodes = fs.readFileSync("./server/teamCodes.txt").toString().split("\r\n");
 
 for(let i = 0; i < 100; i++){
-    teams.push(new Team(i.toString()));
+    teams.push(new Team(teamCodes[i]));
+    console.log(teamCodes[i]);
 }
 
 //This should be implemented, basically a way of filtering IPs. Such as multiple users from the same IP
