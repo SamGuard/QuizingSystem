@@ -50,15 +50,21 @@ app.post("/answers", function(req, res, next){
 });
 
 app.post("/mark", function(req, res, next){
-    let answer = answer;
+    let secret = req.body.secret;
+    if(secret == undefined || sha256(secret) != "3f3be1a9d2b99e7fa83031f9c467d7e1609fd1b37d20c993d6f8e2b07f142e45"){
+        res.send("your secret is wrong");
+        return;
+    }
+
     let round = req.body.round;
     let quest = req.body.question;
-    let correct= req.body.correct;
+    let correct = req.body.correct;
     let teamCode = req.body.code;
 
     for(let i = 0; i < global.teams.length; i++){
         if(global.teams[i].code == teamCode){
-            
+            global.teams[i].data.answers["round" + round.toString()]["question" + quest.toString()].correct = correct;
+            global.teams[i].data.answers["round" + round.toString()]["question" + quest.toString()].marked = true;
         }
     }
 

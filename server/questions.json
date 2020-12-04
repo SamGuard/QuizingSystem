@@ -1,12 +1,15 @@
 {
   "rounds": 2,
   "round0": {
-    "questions": 0
+    "questions": 0,
+    "questionType": "text"
   },
   "round1": {
-    "questions": 3
+    "questions": 3,
+    "questionType": "text"
   },
   "round2": {
-    "questions": 4
+    "questions": 4,
+    "questionType": "text"
   }
 }

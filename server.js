@@ -179,7 +179,9 @@ function submit(mess, conn){
         }));
     }
 
-    team.addAnswer(quiz.round, quiz.q, mess.data.answer);
+    if(quiz.getQuestion().round != -1){
+        team.addAnswers(quiz.getQuestion().round, quiz.quiz["round" + quiz.getQuestion().round].questions, mess.data.answers);
+    }
 }
 
 function handleMessage(mess, conn) {

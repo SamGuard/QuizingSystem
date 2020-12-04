@@ -53,7 +53,7 @@ class ConnectionHandler {
     answer(){
         let data = JSON.stringify({
             purp: "submit",
-            data: { code: this.teamCode, answer: "yeeeeeeeeeeeeeeeeeeeeeeeeeeet" },
+            data: { code: this.teamCode, answers: {question1: "1", question2:"awdad", question3: "112341"} },
             time: Date.now(),
             id: this.id
         });

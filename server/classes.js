@@ -62,6 +62,17 @@ class Quiz {
                 this.q++;
             }
         }
+
+        let connections = global.connections;
+        for (let i = 0; i < connections.length; i++) {
+            connections[i].sendUTF(JSON.stringify({
+                purp: "getquest",
+                data: { quest: this.getQuestion() },
+                time: Date.now(),
+                id: connections[i].id.id
+            }));
+        }
+
         return this.getQuestion();
     }
 
@@ -77,6 +88,17 @@ class Quiz {
         } else {
             this.q--;
         }
+
+        let connections = global.connections;
+        for (let i = 0; i < connections.length; i++) {
+            connections[i].sendUTF(JSON.stringify({
+                purp: "getquest",
+                data: { quest: this.getQuestion() },
+                time: Date.now(),
+                id: connections[i].id.id
+            }));
+        }
+
         return this.getQuestion();
     }
 }
@@ -96,20 +118,26 @@ class Team {
             code: this.code,
             teamName: this.name,
             playerNames: playerNames,
-            answer: {}
+            answers: {}
         };
 
         this.isSetup = true;
     }
 
-    addAnswer(round, ques, ans) {
+    addAnswers(round, questions, ans) {
         if(this.isSetup == false){
+            console.log("Cannot add answer, team not setup");
             return -1;
         }
-        if (this.data.answer["round" + round.toString()] == undefined) {
-            this.data.answer["round" + round.toString()] = {};
+
+        for(let i = 1; i <= questions; i++){
+            if (this.data.answers["round" + round.toString()] == undefined) {
+                this.data.answers["round" + round.toString()] = {};
+            }
+
+            this.data.answers["round" + round.toString()]["question" + i.toString()] = {answer: ans["question" + i.toString()], correct: false, marked: false};
         }
-        this.data.answer["round" + round.toString()]["question" + ques.toString()] = {answer: ans, correct: false, marked: false};
+
         fs.writeFile("./server/answers/" + this.code + ".json", JSON.stringify(this.data, null, 2), function(err){
             if(err){console.log(err);}
         });
