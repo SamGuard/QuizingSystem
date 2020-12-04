@@ -66,7 +66,7 @@ class Quiz {
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF(JSON.stringify({
                 purp: "getround",
-                data: { round: this.getRound() },
+                data: { open: false, round: this.getRound() },
                 time: Date.now(),
                 id: connections[i].id.id
             }));
@@ -86,7 +86,7 @@ class Quiz {
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF(JSON.stringify({
                 purp: "getround",
-                data: { round: this.getRound() },
+                data: { open: false, round: this.getRound() },
                 time: Date.now(),
                 id: connections[i].id.id
             }));
