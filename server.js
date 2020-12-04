@@ -130,7 +130,7 @@ function joinTeam(mess, conn){
 
     conn.sendUTF(JSON.stringify({
         purp: "jointeam",
-        data: { success: true, name: team.name },
+        data: { success: true, name: team.name, open: quiz.isOpen, round: quiz.getRound() },
         time: Date.now(),
         id: mess.id
     }));
