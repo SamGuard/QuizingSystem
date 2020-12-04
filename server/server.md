@@ -25,7 +25,6 @@ command = next, prev, open or close
 if you do not send the secret the request will just be rejected, dont try looking in the code for the secret as the
 plain text is not in there only the sha256 shifted text is in there.
 
-have not done the marking api yet but it will most likely be:
 Send a post request to /answers to get all the answers people gave (with secret)
 Send a post requets to /mark with the team code, the round, the question number and whether they got it right
 
