@@ -114,6 +114,8 @@ class Team {
             answers: {}
         };
 
+        this.open();
+
         this.isSetup = true;
     }
 
@@ -138,6 +140,12 @@ class Team {
         fs.writeFile("./server/answers/" + this.code + ".json", JSON.stringify(this.data, null, 2), function(err){
             if(err){console.log(err);}
         });
+    }
+
+    open(){
+        if(fs.existsSync("./server/answers/" + this.code + ".json")){
+           this.data = JSON.parse(fs.readFileSync("./server/answers/" + this.code + ".json")); 
+        }
     }
 }
 
