@@ -15,7 +15,6 @@ class Quiz {
 
         this.isOpen = true;
         this.round = 0;
-        this.q = 0;
     }
 
     open() {
@@ -24,7 +23,7 @@ class Quiz {
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF(JSON.stringify({
                 purp: "sub",
-                data: { open: true, quest: this.getQuestion() },
+                data: { open: true, round: this.getRound() },
                 time: Date.now(),
                 id: connections[i].id.id
             }));
@@ -37,15 +36,11 @@ class Quiz {
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF(JSON.stringify({
                 purp: "sub",
-                data: { open: false, quest: this.getQuestion() },
+                data: { open: false, round: this.getRound() },
                 time: Date.now(),
                 id: connections[i].id.id
             }));
         }
-    }
-
-    getQuestion() {
-        return { "round": this.round, "quest": this.q };
     }
 
     getRound(){
@@ -59,57 +54,45 @@ class Quiz {
     }
 
     forward() {
-        if (this.q != -1 || this.round != -1) {
-            if (this.q == this.quiz["round" + this.round.toString()].questions) {
-                if (this.round == this.quiz.rounds) {
-                    this.q = -1;
-                    this.round = -1;
-                } else {
-                    this.round++;
-                    this.q = 0;
-                }
+        if(this.round != -1){
+            if (this.round == this.quiz.rounds) {
+                this.round = -1;
             } else {
-                this.q++;
+                this.round++;
             }
-        }
+        } 
 
         let connections = global.connections;
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF(JSON.stringify({
-                purp: "getquest",
-                data: { quest: this.getQuestion(), round: this.quiz["round" + this.getQuestion().round.toString()] },
+                purp: "getround",
+                data: { round: this.getRound() },
                 time: Date.now(),
                 id: connections[i].id.id
             }));
         }
 
-        return this.getQuestion();
+        return this.getRound();
     }
 
     backward() {
-        if (this.q == -1 || this.round == -1) {
+        if(this.round == -1){
             this.round = this.quiz.rounds;
-            this.q = this.quiz["round" + this.round.toString()].questions;
-        } else if (this.q == 0) {
-            if (this.round != 0) {
-                this.round--;
-                this.q = this.quiz["round" + this.round.toString()].questions;
-            }
-        } else {
-            this.q--;
+        } else if(this.round > 0){
+            this.round--;
         }
 
         let connections = global.connections;
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF(JSON.stringify({
-                purp: "getquest",
-                data: { round: this.quiz["round" + this.getQuestion().round.toString()] },
+                purp: "getround",
+                data: { round: this.getRound() },
                 time: Date.now(),
                 id: connections[i].id.id
             }));
         }
 
-        return this.getQuestion();
+        return this.getRound();
     }
 }
 
