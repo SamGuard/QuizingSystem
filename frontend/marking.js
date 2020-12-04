@@ -11,14 +11,27 @@ function dispans(response) {
     $("#markboxes").empty();
     for (var i = 0; i < response.length; i++) {
         console.log(response[i]);
-        $("#markboxes").append(
-            $("<div>").prop({
-                id: response[i].code,
-                className: 'markbox',
-                innerHTML: response[i].teamName + "<br>" + response[i].answers["round"+roundnum]["question"+qnum].answer,
-                value: "0"
-            })
-        );
+        if (roundnum == 5 && qnum == 2) {
+            // image question 300x300
+            $("#markboxes").append(
+                $("<div>").prop({
+                    id: response[i].code,
+                    className: 'markbox',
+                    innerHTML: response[i].teamName + "<br><img src='" + response[i].answers["round"+roundnum]["question"+qnum].answer + "'>",
+                    value: "0"
+                })
+            );
+        } else {
+            $("#markboxes").append(
+                $("<div>").prop({
+                    id: response[i].code,
+                    className: 'markbox',
+                    innerHTML: response[i].teamName + "<br>" + response[i].answers["round"+roundnum]["question"+qnum].answer,
+                    value: "0"
+                })
+            );
+        }
+
         if (response[i].answers["round"+roundnum]["question"+qnum].marked) {
             if (response[i].answers["round"+roundnum]["question"+qnum].correct) {
                 $("#"+ response[i].code).css("background-color", "#80ff80")
