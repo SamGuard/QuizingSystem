@@ -107,7 +107,7 @@ conHandler.socket.onmessage = function (event) {
         //Change screen or something
     } 
     else if (data.purp == "getround") {
-        console.log(data.data.round);
+        console.log(data.data);
     } 
     else if (data.purp == "sub") {
         console.log(data.data);

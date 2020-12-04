@@ -136,10 +136,10 @@ function joinTeam(mess, conn){
     }));
 }
 
-function getQuest(mess, conn){
+function getRound(mess, conn){
     conn.sendUTF(JSON.stringify({
         purp: "getround",
-        data: { quest: quiz.getRound() },
+        data:  quiz.getRound(),
         time: Date.now(),
         id: mess.id
     }));
@@ -179,8 +179,8 @@ function submit(mess, conn){
         }));
     }
 
-    if(quiz.getQuestion().round != -1){
-        team.addAnswers(quiz.getQuestion().round, quiz.quiz["round" + quiz.getQuestion().round].questions, mess.data.answers);
+    if(quiz.round != -1){
+        team.addAnswers(quiz.round, quiz.quiz["round" + quiz.round].questions, mess.data.answers);
     }
 }
 
@@ -191,7 +191,7 @@ function handleMessage(mess, conn) {
     } else if(mess.purp == "jointeam"){
         joinTeam(mess, conn)
     } else if(mess.purp == "getround"){
-        getQuest(mess, conn);
+        getRound(mess, conn);
     } else if(mess.purp == "submit"){
         submit(mess, conn);
     } else {
