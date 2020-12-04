@@ -12,8 +12,8 @@ class ConnectionHandler {
     constructor() {
         this.isHost = true;
         this.gameRunning = false;
-        this.roomCode = "";
         this.teamCode = null;
+        this.teamName = null;
         this.id = makeid(12);
         console.log("Your id is: " + this.id);
 
@@ -33,7 +33,7 @@ class ConnectionHandler {
     joinTeam() {
         let data = JSON.stringify({
             purp: "jointeam",
-            data: { code: this.teamCode, name: "team1" },
+            data: { code: this.teamCode, name: this.teamName },
             time: Date.now(),
             id: this.id
         });
@@ -85,22 +85,38 @@ conHandler.socket.onmessage = function (event) {
         return;
     }
 
-    if(data.purp == "jointeam"){
-        if(data.data.success == false){
-            //Todo - Handle error
+    if (data.purp == "jointeam") {
+        if (data.data.success == false) {
             console.log("Failed to joined team");
+            conHandler.teamCode = null;
             return;
         }
+        conHandler.teamName = data.data.name;
         console.log("Joined team");
+        $('#codePage').hide();
+        if (conHandler.teamName == null) {
+            $('#namePage').show();
+            $('#questionPage').hide();
+        }
+        else {
+            $('#teamNameTitle').text("Team: " + conHandler.teamName);
+            $('#questionPage').show();
+            $('#namePage').hide();
+        }
+        
         conHandler.answer();
         //Change screen or something
-    } else if(data.purp == "getquest"){
+    } 
+    else if (data.purp == "getquest") {
         console.log(data.data.quest);
-    } else if(data.purp == "sub"){
+    } 
+    else if (data.purp == "sub") {
         console.log(data.data);
-    } else if(data.purp == "error"){
+    } 
+    else if (data.purp == "error") {
         console.log("Error: ", data.data.error);
-    } else {
+    } 
+    else {
         console.log("Error purpose not recognise");
     }
 
@@ -120,14 +136,22 @@ conHandler.socket.onerror = function (error) {
 };
 
 $(document).ready(function () {
-    $('#namePage').show();
+    $('#codePage').show();
+    $('#namePage').hide();
+    $('#questionPage').hide();
+
+    $('#submitCodeButton').click(function () {
+        conHandler.teamCode = $('#codeInput').val();
+        conHandler.joinTeam();
+    });
 
     $('#submitNameButton').click(function () {
-        if(conHandler.teamCode == null){
-            conHandler.teamCode = $('#nameInput').val();
-            conHandler.joinTeam();        
-        } else {
-            conHandler.getQuestion();
-        }
+        conHandler.teamName = $('#nameInput').val();
+        conHandler.joinTeam();
     });
+
+    $('#getQuestionButton').click(function () {
+        conHandler.getQuestion();
+    });
+
 });

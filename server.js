@@ -111,26 +111,26 @@ function joinTeam(mess, conn){
         return;
     }
 
-    let teamIndex = findTeamByCode(code)
+    let teamIndex = findTeamByCode(code);
 
-    if(teamIndex == -1){
+    if(teamIndex == -1) { // team code doesn't exist
         conn.sendUTF(JSON.stringify({
-            purp: "error",
-            data: { error: "incorrect team code" },
+            purp: "jointeam",
+            data: { success: false },
             time: Date.now(),
             id: mess.id
         }));
         return;
     }
-
+    
     let team = teams[teamIndex];
-    if(team.name == null && mess.data.name != undefined){
+    if(team.name == null && mess.data.name != null){
         team.name = mess.data.name;
     }
 
     conn.sendUTF(JSON.stringify({
         purp: "jointeam",
-        data: { success: true },
+        data: { success: true, name: team.name },
         time: Date.now(),
         id: mess.id
     }));

@@ -1,7 +1,4 @@
-@font-face {
-  font-family: the8bit;
-  src: url(assets/font/SuperLegendBoy-4w8Y.ttf);
-}
+
 .GridContainer {
   display: inline-grid;
   grid-template-columns: auto auto auto;
@@ -16,7 +13,7 @@
 }
 
 body {
-  font-family: the8bit;
+  font-family: Roboto;
   background-color: #F3F5F6;
 }
 
@@ -109,7 +106,7 @@ body {
   border: none;
   cursor: pointer;
   line-height: 1.5;
-  font: 700 1.2rem the8bit;
+  font: 700 1.2rem Roboto;
   text-transform: uppercase;
   padding: 1em 2em;
   letter-spacing: 0.05rem;
@@ -123,29 +120,19 @@ body {
 input {
   border: none;
   padding: 0;
-  width: 9ch;
-  background: repeating-linear-gradient(90deg, dimgrey 0, dimgrey 1ch, transparent 0, transparent 1.5ch) 0 100%/10ch 2px no-repeat;
-  font: 5ch droid sans mono, the8bit, monospace;
+  width: 20ch;
+  background: repeating-linear-gradient(0deg, dimgrey 0, dimgrey 1ch, transparent 0, transparent 1.5ch) 0 100%/10ch 2px repeat-x;
+  font: 3ch droid sans mono, Roboto, monospace;
   letter-spacing: 0.5ch;
   color: #2C3E50;
   margin-bottom: 15px;
-  text-transform: uppercase;
-
 }
+
 input:focus {
   outline: none;
-  color: dodgerblue;
 }
 
-#nameInput {
-  border: none;
-  padding: 0;
-  width: 9ch;
-  background: repeating-linear-gradient(0deg, dimgrey 0, dimgrey 1ch, transparent 0, transparent 1.5ch) 0 100%/10ch 2px no-repeat;
-  font: 3ch droid sans mono, the8bit, monospace;
-  letter-spacing: 0.5ch;
-  color: #2C3E50;
-  margin-bottom: 15px;
+#codeInput {
+  font: 5ch droid sans mono, Roboto, monospace;
   text-transform: uppercase;
-
 }

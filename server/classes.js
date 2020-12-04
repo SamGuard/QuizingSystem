@@ -102,7 +102,7 @@ class Team {
             this.data.answer["round" + round.toString()] = {};
         }
         this.data.answer["round" + round.toString()]["question" + ques.toString()] = {answer: ans, correct: false, marked: false};
-        fs.writeFile("./server/answers/" + this.code + ".json", JSON.stringify(this.data), function(err){
+        fs.writeFile("./server/answers/" + this.code + ".json", JSON.stringify(this.data, null, 2), function(err){
             if(err){console.log(err);}
         });
     }
