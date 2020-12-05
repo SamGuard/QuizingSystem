@@ -202,7 +202,7 @@ function updateRound(data) {
                     isCanvasRound = true;
                     $('#clearCanvas').click(function(){clearArea()});
                 } else {
-                    $('#answerBoxes').append(`Question ${i}:  <input class='answerBox' id='answer" + i + "' type='text' spellcheck='false'><br><br>`);
+                    $('#answerBoxes').append(`Question ${i}:  <input class='answerBox' id='answer${i}' type='text' spellcheck='false'><br><br>`);
                 }
             }
 
