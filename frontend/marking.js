@@ -158,4 +158,17 @@ $(document).ready(function () {
             dispans(response);
         });
     });
+
+    $("#subcount").click(function () {
+        $.post("/answers", {"secret": password}, function(result) {
+            var response = JSON.parse(result);
+            var count = 0;
+            for (var i = 0; i < response.length; i++) {
+                if(response[i].answers["round"+roundnum]){
+                    count++;
+                }
+            }
+            $("#subcount").text("Submissions: " + count);
+        });
+    });
 });

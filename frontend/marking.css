@@ -73,8 +73,28 @@ body {
 
 #password {
     position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    margin: 10px;
+}
+
+#subcount {
+    position: absolute;
     bottom: 0;
     right: 0;
+    /* width: 150px;
+    margin: 10px; */
+    background: none;
+    border: none;
+    cursor: pointer;
+    line-height: 1.5;
+    /* font: 700 1.2rem Roboto; */
+    font: 700 18px Roboto;
+    text-transform: uppercase;
+    padding: 1em 2em;
+    letter-spacing: 0.05rem;
+    /* width: 200px; */
     margin: 10px;
 }
 
@@ -131,6 +151,7 @@ body {
     width: 15%;
     margin: 10px;
   }
+  
   .btn:focus {
     outline: 2px dotted #2C3E50;
   }
