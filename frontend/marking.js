@@ -61,6 +61,9 @@ function dispans(response) {
                 case 0:
                     $(this).css("color", "black")
                     $(this).css("background-color", "#f0f0f0")
+                    if (roundnum == 5 && qnum == 2) {
+                        $(this).children('img').eq(0).css("visibility", "visible");
+                    }
                     break;
                 case 1:
                     $(this).css("background-color", "#80ff80")
@@ -71,6 +74,9 @@ function dispans(response) {
                 case 3:
                     $(this).css("color", "#808080")
                     $(this).css("background-color", "#808080")
+                    if (roundnum == 5 && qnum == 2) {
+                        $(this).children('img').eq(0).css("visibility", "hidden");
+                    }
                     break;
             }
 
@@ -99,8 +105,15 @@ $(document).ready(function () {
         $.post("/control", {"secret": password, "command": "prev"}, function(result) {
             console.log(result);
             var response = JSON.parse(result);
+            if (roundnum != response.round) {
+                qnum = 1;
+            }
             roundnum = response.round;
             $("#roundno").text("Round: " + response.round);
+            $.post("/answers", {"secret": password}, function(result) {
+                var response = JSON.parse(result);
+                dispans(response);
+            });
         });
     });
 
@@ -109,8 +122,15 @@ $(document).ready(function () {
         $.post("/control", {"secret": password, "command": "next"}, function(result) {
             console.log(JSON.parse(result));
             var response = JSON.parse(result);
+            if (roundnum != response.round) {
+                qnum = 1;
+            }
             roundnum = response.round;
             $("#roundno").text("Round: " + response.round);
+            $.post("/answers", {"secret": password}, function(result) {
+                var response = JSON.parse(result);
+                dispans(response);
+            });
         });
     });
 
