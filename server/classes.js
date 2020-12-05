@@ -1,6 +1,7 @@
 const { throws } = require('assert');
 
 fs = require('fs');
+const sanitize = require('sanitize-html');
 
 class ID {
     constructor(ip, id) {
@@ -129,7 +130,22 @@ class Team {
                 this.data.answers["round" + round.toString()] = {};
             }
 
-            this.data.answers["round" + round.toString()]["question" + i.toString()] = {answer: ans["question" + i.toString()], correct: false, marked: false};
+            if(round !== 5 || i !== 2) {
+                this.data.answers["round" + round.toString()]["question" + i.toString()] = {
+                    answer: sanitize(ans["question" + i.toString()], {
+                        allowedTags: [],
+                        allowedAttributes: {}
+                    }),
+                    correct: false,
+                    marked: false
+                };
+            } else {
+                this.data.answers["round" + round.toString()]["question" + i.toString()] = {
+                    answer: ans["question" + i.toString()],
+                    correct: false,
+                    marked: false
+                };
+            }
         }
 
         this.save();

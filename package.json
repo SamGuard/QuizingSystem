@@ -27,6 +27,7 @@
     "matter-js": "^0.14.2",
     "nodemon": "^2.0.6",
     "poly-decomp": "^0.3.0",
+    "sanitize-html": "^2.2.0",
     "sha256": "^0.2.0",
     "short-id": "0.1.0-1",
     "websocket": "^1.0.32"
