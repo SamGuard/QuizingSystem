@@ -21,7 +21,8 @@ function dispans(response) {
                     id: response[i].code,
                     className: 'markbox',
                     innerHTML: response[i].teamName + "<br><img src='" + response[i].answers["round"+roundnum]["question"+qnum].answer + "'>",
-                    value: "0"
+                    value: "0",
+                    style: "height: 350px"
                 })
             );
         } else {

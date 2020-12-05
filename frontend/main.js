@@ -180,10 +180,12 @@ function updateRound(data) {
             $('#questionBlock').hide();
             $('#roundInfo').text("Please wait for the next round to begin!");
             $('#roundInfo').show();
+            $('#submitSuccess').hide();
             // please wait for round to begin
         }
         else {
             console.log("display question boxes");
+            $('#submitSuccess').hide();
             $('#roundName').show();
             $('#roundName').text("Round " + data.round.round + " - " + data.round.name);
             $('#questionBlock').show();
