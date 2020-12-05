@@ -54,6 +54,9 @@ class ConnectionHandler {
 
 let conHandler = new ConnectionHandler();
 let audio = new Audio();
+let ctx, lastX, lastY;
+let mousePressed = false;
+let isCanvasRound = false;
 
 conHandler.socket.onopen = function (e) {
     let data = JSON.stringify({
@@ -115,6 +118,48 @@ conHandler.socket.onmessage = function (event) {
     }
 };
 
+function initCanvas(){
+    ctx = document.getElementById('canvas').getContext("2d");
+
+    $('#canvas').mousedown(function (e) {
+        mousePressed = true;
+        Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
+    });
+
+    $('#canvas').mousemove(function (e) {
+        if (mousePressed) {
+            Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, true);
+        }
+    });
+
+    $('#canvas').mouseup(function (e) {
+        mousePressed = false;
+    });
+	    $('#canvas').mouseleave(function (e) {
+        mousePressed = false;
+    });
+}
+
+function clearArea() {
+    // Use the identity matrix while clearing the canvas
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+}
+
+function Draw(x, y, isDown) {
+    if (isDown) {
+        ctx.beginPath();
+        ctx.strokeStyle = $('#selColor').val();
+        ctx.lineWidth = $('#selWidth').val();
+        ctx.lineJoin = "round";
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    lastX = x; lastY = y;
+}
+
 function updateRound(data) {
     if (data.round.round == 0) {
         console.log("please wait for quiz");
@@ -141,8 +186,17 @@ function updateRound(data) {
             $('#roundName').text("Round " + data.round.round + " - " + data.round.name);
             $('#questionBlock').show();
             $('#answerBoxes').empty();
+            isCanvasRound = false;
             for (let i = 1; i < 6; i++) {
-                $('#answerBoxes').append("Question " + i + ":  <input class='answerBox' id='answer" + i + "' type='text' spellcheck='false'><br><br>");
+                if(data.round.round == 5, i == 2){
+                    $('#answerBoxes').append(`Question ${i}:  <canvas id="canvas" width="300" height="300" style="width: 600px; height: 600px; border: 2px solid powderblue;"></canvas><br><br>`);
+                    initCanvas();
+                    ctx = document.getElementById('canvas').getContext("2d");
+                    ctx.scale(0.5, 0.5);
+                    isCanvasRound = true;
+                } else {
+                    $('#answerBoxes').append(`Question ${i}:  <input class='answerBox' id='answer" + i + "' type='text' spellcheck='false'><br><br>`);
+                }
             }
 
             $('#roundInfo').hide();
@@ -181,7 +235,12 @@ $(document).ready(function () {
     });
 
     $('#submitRoundButton').click(function () {
-        let x = {question1: $('#answer1').val(), question2: $('#answer2').val(), question3: $('#answer3').val(), question4: $('#answer4').val(), question5: $('#answer5').val()};
+        let x;
+        if(isCanvasRound == true){
+            x = {question1: $('#answer1').val(), question2: document.getElementById('canvas').toDataURL("image/png"), question3: $('#answer3').val(), question4: $('#answer4').val(), question5: $('#answer5').val()}; 
+        }else{
+            x = {question1: $('#answer1').val(), question2: $('#answer2').val(), question3: $('#answer3').val(), question4: $('#answer4').val(), question5: $('#answer5').val()};
+        }
         conHandler.answer(x);
     });
 
