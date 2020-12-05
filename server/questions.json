@@ -27,5 +27,9 @@
   "round6": {
     "name": "Twitter",
     "questions": 5
+  },
+  "round7": {
+    "name": "End",
+    "questions": 0
   }
 }

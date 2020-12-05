@@ -172,6 +172,14 @@ function updateRound(data) {
 
         // please wait for quiz to begin
     }
+    else if (data.round.round == -1) { 
+        // end of quiz
+        $('#roundName').hide();
+        $('#questionBlock').hide();
+        $('#roundInfo').text("End of quiz!");
+        $('#roundInfo').show();
+        $('#submitSuccess').hide();
+    }
     else {
         if (data.open == false) {
             console.log("please wait for round");

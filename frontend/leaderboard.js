@@ -28,7 +28,7 @@ $(document).ready(function () {
             scores.sort(function(a, b){return b.score - a.score});
             $('#leaderboard').empty();
             for(let i = 0; i < scores.length; i++){
-                $('#leaderboard').append(`<div class="markbox"> ${scores[i].name} ${scores[i].score}</div>`);
+                $('#leaderboard').append(`<div class="markbox"> ${scores[i].name} <br>${scores[i].score}</div>`);
             }
         });
     });
