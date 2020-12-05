@@ -101,6 +101,7 @@ class Team {
     constructor(code) {
         this.code = code;
         this.isSetup = false;
+        this.open();
     }
 
     setup(name, playerNames){
@@ -113,8 +114,6 @@ class Team {
             playerNames: playerNames,
             answers: {}
         };
-
-        this.open();
 
         this.isSetup = true;
     }
@@ -145,6 +144,9 @@ class Team {
     open(){
         if(fs.existsSync("./server/answers/" + this.code + ".json")){
            this.data = JSON.parse(fs.readFileSync("./server/answers/" + this.code + ".json")); 
+           this.isSetup = true;
+           this.code = this.data.code;
+           this.name = this.data.teamName;
         }
     }
 }
