@@ -142,8 +142,7 @@ function initCanvas(){
 
 function clearArea() {
     // Use the identity matrix while clearing the canvas
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.clearRect(0, 0, ctx.canvas.width * 2, ctx.canvas.height * 2);
 }
 
 function Draw(x, y, isDown) {
@@ -189,11 +188,16 @@ function updateRound(data) {
             isCanvasRound = false;
             for (let i = 1; i < 6; i++) {
                 if(data.round.round == 5, i == 2){
-                    $('#answerBoxes').append(`Question ${i}:  <canvas id="canvas" width="300" height="300" style="width: 600px; height: 600px; border: 2px solid powderblue;"></canvas><br><br>`);
+                    $('#answerBoxes').append(`Question ${i}: <br>  
+                    <canvas id="canvas" width="300" height="300" style="width: 600px; height: 600px; border: 2px solid powderblue;"></canvas>
+                    <br>
+                    <button id="clearCanvas" class="btn draw-border">Clear</button>
+                    <br><br>`);
                     initCanvas();
                     ctx = document.getElementById('canvas').getContext("2d");
                     ctx.scale(0.5, 0.5);
                     isCanvasRound = true;
+                    $('#clearCanvas').click(function(){clearArea()});
                 } else {
                     $('#answerBoxes').append(`Question ${i}:  <input class='answerBox' id='answer" + i + "' type='text' spellcheck='false'><br><br>`);
                 }
