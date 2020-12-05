@@ -109,7 +109,9 @@ conHandler.socket.onmessage = function (event) {
         console.log(data.data);
         updateRound(data.data);
 
-    } 
+    } else if(data.purp == "confirmsub"){
+        $('#submitSuccess').show();
+    }
     else if (data.purp == "error") {
         console.log("Error: ", data.data.error);
     } 
@@ -166,6 +168,7 @@ function updateRound(data) {
         $('#questionBlock').hide();
         $('#roundInfo').text("Please wait for the quiz to begin!");
         $('#roundInfo').show();
+        $('#submitSuccess').hide();
 
         // please wait for quiz to begin
     }
@@ -187,7 +190,7 @@ function updateRound(data) {
             $('#answerBoxes').empty();
             isCanvasRound = false;
             for (let i = 1; i < 6; i++) {
-                if(data.round.round == 5, i == 2){
+                if(data.round.round == 5 && i == 2){
                     $('#answerBoxes').append(`Question ${i}: <br>  
                     <canvas id="canvas" width="300" height="300" style="width: 600px; height: 600px; border: 2px solid powderblue;"></canvas>
                     <br>
