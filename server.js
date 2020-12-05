@@ -180,9 +180,15 @@ function submit(mess, conn){
             id: mess.id
         }));
     }
-    
+
     if(quiz.round != -1){
         team.addAnswers(quiz.round, quiz.quiz["round" + quiz.round].questions, mess.data.answers);
+        conn.sendUTF(JSON.stringify({
+            purp: "confirmsub",
+            data: { success: true },
+            time: Date.now(),
+            id: mess.id
+        }));
     }
 }
 
