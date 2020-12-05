@@ -11,6 +11,9 @@ function dispans(response) {
     $("#markboxes").empty();
     for (var i = 0; i < response.length; i++) {
         console.log(response[i]);
+        if(!response[i].answers["round"+roundnum]){
+            continue;
+        }
         if (roundnum == 5 && qnum == 2) {
             // image question 300x300
             $("#markboxes").append(
