@@ -130,7 +130,7 @@ class Team {
                 this.data.answers["round" + round.toString()] = {};
             }
 
-            if(round !== 5 || i !== 2) {
+            //if(round !== 10 || i !== 20) {
                 this.data.answers["round" + round.toString()]["question" + i.toString()] = {
                     answer: sanitize(ans["question" + i.toString()], {
                         allowedTags: [],
@@ -139,13 +139,13 @@ class Team {
                     correct: false,
                     marked: false
                 };
-            } else {
+            /*} else {
                 this.data.answers["round" + round.toString()]["question" + i.toString()] = {
                     answer: ans["question" + i.toString()],
                     correct: false,
                     marked: false
                 };
-            }
+            }*/
         }
 
         this.save();
