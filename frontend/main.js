@@ -200,7 +200,7 @@ function updateRound(data) {
             $('#answerBoxes').empty();
             isCanvasRound = false;
             for (let i = 1; i < 6; i++) {
-                if(data.round.round == 5 && i == 2){
+                /*if(data.round.round == 5 && i == 2){
                     $('#answerBoxes').append(`Question ${i}: <br>  
                     <canvas id="canvas" width="300" height="300" style="width: 600px; height: 600px; border: 2px solid powderblue;"></canvas>
                     <br>
@@ -211,9 +211,9 @@ function updateRound(data) {
                     ctx.scale(0.5, 0.5);
                     isCanvasRound = true;
                     $('#clearCanvas').click(function(){clearArea()});
-                } else {
+                } else {*/
                     $('#answerBoxes').append(`Question ${i}:  <input class='answerBox' id='answer${i}' type='text' spellcheck='false'><br><br>`);
-                }
+                //}
             }
 
             $('#roundInfo').hide();
