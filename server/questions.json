@@ -5,28 +5,28 @@
     "questions": 0
   },
   "round1": {
-    "name": "General",
-    "questions": 5
+    "name": "Badly Described Films",
+    "questions": 8
   },
   "round2": {
-    "name": "General",
+    "name": "People",
     "questions": 5
   },
   "round3": {
-    "name": "Fresh",
-    "questions": 5
+    "name": "Onion",
+    "questions": 7
   },
   "round4": {
-    "name": "General",
-    "questions": 5
+    "name": "Sports",
+    "questions": 10
   },
   "round5": {
-    "name": "General",
-    "questions": 5
+    "name": "Quickfire TikTok",
+    "questions": 7
   },
   "round6": {
-    "name": "Twitter",
-    "questions": 5
+    "name": "Zoomed in",
+    "questions": 10
   },
   "round7": {
     "name": "End",
