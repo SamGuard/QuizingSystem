@@ -14,7 +14,7 @@ function dispans(response) {
         if(!response[i].answers["round"+roundnum]){
             continue;
         }
-        if (roundnum == 5 && qnum == 2) {
+        /*if (roundnum == 5 && qnum == 2) {
             // image question 300x300
             $("#markboxes").append(
                 $("<div>").prop({
@@ -25,7 +25,7 @@ function dispans(response) {
                     style: "height: 350px"
                 })
             );
-        } else {
+        } else {*/
             $("#markboxes").append(
                 $("<div>").prop({
                     id: response[i].code,
@@ -34,7 +34,7 @@ function dispans(response) {
                     value: "0"
                 })
             );
-        }
+        //}
 
         if (response[i].answers["round"+roundnum]["question"+qnum].marked) {
             if (response[i].answers["round"+roundnum]["question"+qnum].correct) {
