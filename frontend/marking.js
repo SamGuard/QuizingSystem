@@ -61,9 +61,9 @@ function dispans(response) {
                 case 0:
                     $(this).css("color", "black")
                     $(this).css("background-color", "#f0f0f0")
-                    if (roundnum == 5 && qnum == 2) {
+                    /*if (roundnum == 5 && qnum == 2) {
                         $(this).children('img').eq(0).css("visibility", "visible");
-                    }
+                    }*/
                     break;
                 case 1:
                     $(this).css("background-color", "#80ff80")
@@ -74,9 +74,9 @@ function dispans(response) {
                 case 3:
                     $(this).css("color", "#808080")
                     $(this).css("background-color", "#808080")
-                    if (roundnum == 5 && qnum == 2) {
+                    /*if (roundnum == 5 && qnum == 2) {
                         $(this).children('img').eq(0).css("visibility", "hidden");
-                    }
+                    }*/
                     break;
             }
 
@@ -170,7 +170,7 @@ $(document).ready(function () {
 
     $("#nextq").click(function () {
         console.log("nextq");
-        if (qnum < 5) {
+        if (qnum < 15) {
             qnum++;
         }
         $("#questionno").text("Question: " + qnum);

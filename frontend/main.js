@@ -57,6 +57,7 @@ let audio = new Audio();
 let ctx, lastX, lastY;
 let mousePressed = false;
 let isCanvasRound = false;
+let glob_data = {};
 
 conHandler.socket.onopen = function (e) {
     let data = JSON.stringify({
@@ -162,6 +163,7 @@ function Draw(x, y, isDown) {
 }
 
 function updateRound(data) {
+    glob_data = data;
     if (data.round.round == 0) {
         console.log("please wait for quiz");
         $('#roundName').hide();
@@ -199,7 +201,7 @@ function updateRound(data) {
             $('#questionBlock').show();
             $('#answerBoxes').empty();
             isCanvasRound = false;
-            for (let i = 1; i < 6; i++) {
+            for (let i = 1; i <= data.round.questions; i++) {
                 /*if(data.round.round == 5 && i == 2){
                     $('#answerBoxes').append(`Question ${i}: <br>  
                     <canvas id="canvas" width="300" height="300" style="width: 600px; height: 600px; border: 2px solid powderblue;"></canvas>
@@ -256,7 +258,12 @@ $(document).ready(function () {
         if(isCanvasRound == true){
             x = {question1: $('#answer1').val(), question2: document.getElementById('canvas').toDataURL("image/png"), question3: $('#answer3').val(), question4: $('#answer4').val(), question5: $('#answer5').val()}; 
         }else{
-            x = {question1: $('#answer1').val(), question2: $('#answer2').val(), question3: $('#answer3').val(), question4: $('#answer4').val(), question5: $('#answer5').val()};
+            x = {};
+            for (var i = 1; i <= glob_data.round.questions; i++) {
+                x = {...x, ["question" + i]: $('#answer' + i).val()};
+            }
+            console.log(x);
+            //x = {question1: $('#answer1').val(), question2: $('#answer2').val(), question3: $('#answer3').val(), question4: $('#answer4').val(), question5: $('#answer5').val()};
         }
         conHandler.answer(x);
     });

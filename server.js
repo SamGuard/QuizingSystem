@@ -51,7 +51,7 @@ All socket messeges go into the function handleMessage
 let teams = global.teams;
 let quiz = global.quiz;
 
-teamCodes = fs.readFileSync("./server/teamCodes.txt").toString().split("\r\n");
+teamCodes = fs.readFileSync("./server/teamCodes.txt").toString().split("\n");
 
 for(let i = 0; i < 100; i++){
     teams.push(new Team(teamCodes[i]));
